@@ -157,9 +157,7 @@ FoodCell generateFood (char **board, int width, int height)
 	x = 1 + rand() % (width - 2);
 	y = 1 + rand() % (height - 2);
 
-	if (board[y][x] == BORDER_CHAR || 
-		board[y][x] == BODY_CHAR ||
-		board[y][x] == HEAD_CHAR)
+	if (board[y][x] != WHITE_SPACE)
 	    continue;
 	else {
 	    food.x = x;
@@ -283,7 +281,7 @@ int isCollision (char **board, SnakeCell cell, int width, int height)
 #endif
     return (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height
 	    || board[cell.y][cell.x] == BORDER_CHAR
-	    /*|| board[cell.y][cell.x] == LB_RT
-	    || board[cell.y][cell.x] == LT_RB*/
+	    || board[cell.y][cell.x] == LB_RT
+	    || board[cell.y][cell.x] == LT_RB
 	    || board[cell.y][cell.x] == BODY_CHAR);
 }
