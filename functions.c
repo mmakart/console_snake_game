@@ -7,8 +7,9 @@
 /*#define DEBUG*/
 #define BEGIN_SIZE 4
 
-void printSnake (CELLQUEUEPTR currentPtr)
+void printSnake (Snake snake)
 {
+    CELLQUEUEPTR currentPtr = snake.headPtr;
     while (currentPtr != NULL) {
 	printw ("(%d|%d) --> ", currentPtr->cell.x, currentPtr->cell.y);
 	currentPtr = currentPtr->nextPtr;
@@ -17,25 +18,25 @@ void printSnake (CELLQUEUEPTR currentPtr)
 }
 
 void initBoard (char ***board, int width, int height, char whiteSpace,
-	        CELLQUEUEPTR snakeHeadPtr, FoodCell *food)
+	        Snake snake, FoodCell *food)
 {
     allocateBoard (board, width, height);
 
     setEmptyBoard (board, width, height, whiteSpace, BORDER_CHAR);
-    setSnake (board, snakeHeadPtr);
+    setSnake (board, snake);
     *food = generateFood (*board, width, height);
     setFood (*board, *food);
 }
 
 void updateBoard (char ***board, int width, int height, char whiteSpace,
-		  char border, CELLQUEUEPTR snakeHeadPtr, FoodCell food)
+		  char border, Snake snake, FoodCell food)
 {
 #ifdef DEBUG
     printf ("width=%d\theight=%d\n", width, height);
     printf ("food.x=%d\tfood.y=%d\n", food.x, food.y);
 #endif
     setEmptyBoard (board, width, height, whiteSpace, border);
-    setSnake (board, snakeHeadPtr);
+    setSnake (board, snake);
     setFood (*board, food);
 }
 
@@ -86,7 +87,7 @@ void printBoard(char **board, int width, int height)
     }
 }
 
-void initSnake (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr)
+void initSnake (Snake *snake)
 {
     SnakeCell primaryCells[BEGIN_SIZE] = {
 	{ 5, 10, BODY_CHAR },
@@ -96,7 +97,7 @@ void initSnake (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr)
 
     // Добавляем ячейки в змею
     for (int i = 0; i < BEGIN_SIZE; i++)
-	enqueueCell (headPtr, tailPtr, primaryCells[i]);
+	enqueueCell (&(snake->headPtr), &(snake->tailPtr), primaryCells[i]);
 }
 
 void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
@@ -135,8 +136,9 @@ SnakeCell dequeueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr)
     return value;
 }
 
-void setSnake (char ***board, CELLQUEUEPTR currentPtr)
+void setSnake (char ***board, Snake snake)
 {
+    CELLQUEUEPTR currentPtr = snake.headPtr;
     while (currentPtr != NULL) {
 	(*board)[currentPtr->cell.y][currentPtr->cell.x] = currentPtr->cell.c;
 	currentPtr = currentPtr->nextPtr;
@@ -217,38 +219,37 @@ SnakeDirection identificateDirection (int command)
     return direction;
 }
 
-int moveSnake (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
-	       SnakeDirection direction, SnakeDirection previousDirection,
+int moveSnake (Snake *snake, SnakeDirection previousDirection,
 	       FoodCell *food, char **board, int width, int height, int *score)
 {
     SnakeCell tempCell;
 
-    tempCell.x = (*tailPtr)->cell.x;
-    tempCell.y = (*tailPtr)->cell.y;
-    tempCell.c = (*tailPtr)->cell.c;
+    tempCell.x = snake->tailPtr->cell.x;
+    tempCell.y = snake->tailPtr->cell.y;
+    tempCell.c = snake->tailPtr->cell.c;
 
     // Предыдущую "голову" назначаем "туловищем"
-    if (direction == TO_RIGHT && previousDirection == TO_TOP
-	    || direction == TO_BOTTOM && previousDirection == TO_LEFT
-	    || direction == TO_LEFT && previousDirection == TO_BOTTOM
-	    || direction == TO_TOP && previousDirection == TO_RIGHT)
-	(*tailPtr)->cell.c = LB_RT;
-    else if (direction == TO_RIGHT && previousDirection == TO_BOTTOM
-	    || direction == TO_BOTTOM && previousDirection == TO_RIGHT
-	    || direction == TO_LEFT && previousDirection == TO_TOP
-	    || direction == TO_TOP && previousDirection == TO_LEFT)
-	(*tailPtr)->cell.c = LT_RB;
+    if (snake->direction == TO_RIGHT && previousDirection == TO_TOP
+	    || snake->direction == TO_BOTTOM && previousDirection == TO_LEFT
+	    || snake->direction == TO_LEFT && previousDirection == TO_BOTTOM
+	    || snake->direction == TO_TOP && previousDirection == TO_RIGHT)
+	snake->tailPtr->cell.c = LB_RT;
+    else if (snake->direction == TO_RIGHT && previousDirection == TO_BOTTOM
+	    || snake->direction == TO_BOTTOM && previousDirection == TO_RIGHT
+	    || snake->direction == TO_LEFT && previousDirection == TO_TOP
+	    || snake->direction == TO_TOP && previousDirection == TO_LEFT)
+	snake->tailPtr->cell.c = LT_RB;
     else
-	(*tailPtr)->cell.c = BODY_CHAR;
+	snake->tailPtr->cell.c = BODY_CHAR;
 
     // Назначаем "голове" нужные координаты
-    if (direction == TO_TOP)
+    if (snake->direction == TO_TOP)
 	tempCell.y -= 1;
-    else if (direction == TO_RIGHT)
+    else if (snake->direction == TO_RIGHT)
 	tempCell.x += 1;
-    else if (direction == TO_LEFT)
+    else if (snake->direction == TO_LEFT)
 	tempCell.x -= 1;
-    else if (direction == TO_BOTTOM)
+    else if (snake->direction == TO_BOTTOM)
 	tempCell.y += 1;
     else
 	tempCell.x += 1;
@@ -258,16 +259,16 @@ int moveSnake (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
 	return 1;
 
     // Добавляем "голову" в конец очереди
-    enqueueCell (headPtr, tailPtr, tempCell);
+    enqueueCell (&(snake->headPtr), &(snake->tailPtr), tempCell);
 
     // Если наткнулись на еду
     if (board[tempCell.y][tempCell.x] == FOOD_CHAR) {
-	(*food) = generateFood (board, width, height);
+	*food = generateFood (board, width, height);
 	(*score)++;
     }
     else
 	// Убираем хвост змеи
-	dequeueCell (headPtr, tailPtr);
+	dequeueCell (&(snake->headPtr), &(snake->tailPtr));
 
     return 0;
 

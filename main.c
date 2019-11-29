@@ -8,7 +8,6 @@ int main(int argc, char **argv)
 {
     char **board;
     int height = 20, width = 20;
-    SnakeDirection snakeDirection = TO_RIGHT;
     SnakeDirection prevDirection;
     char command[20];
     FoodCell foodCell;
@@ -23,13 +22,15 @@ int main(int argc, char **argv)
     else
 	timePeriod = 400;
 
-    // Очередь из ячеек змейки
-    CELLQUEUEPTR snakeHeadPtr = NULL, snakeTailPtr = NULL;
+    Snake snake;
+    snake.headPtr = NULL;
+    snake.tailPtr = NULL;
+    snake.direction = TO_RIGHT;
 
     initscr ();
 
-    initSnake (&snakeHeadPtr, &snakeTailPtr);
-    initBoard (&board, width, height, WHITE_SPACE, snakeHeadPtr, &foodCell);
+    initSnake (&snake);
+    initBoard (&board, width, height, WHITE_SPACE, snake, &foodCell);
     printBoard (board, width, height);
 
     refresh ();
@@ -38,16 +39,17 @@ int main(int argc, char **argv)
 
 	napms (timePeriod);
 
-	prevDirection = snakeDirection;
+	prevDirection = snake.direction;
 
 	// 1 - direction identification
 	if (kbhit ()) {
-	    snakeDirection = identificateDirection (getch ());
+	    snake.direction = identificateDirection (getch ());
 	}
 
 	// 2 - transformations over the snake
-	collisionOccured = moveSnake (&snakeHeadPtr, &snakeTailPtr, snakeDirection,
-		prevDirection, &foodCell, board, width, height, &score);
+	collisionOccured = moveSnake (
+		&snake, prevDirection, &foodCell,
+		board, width, height, &score);
 
 	// 3 - check for collision
 	if (collisionOccured) {
@@ -59,14 +61,14 @@ int main(int argc, char **argv)
 
 	// 4 - redrawing the board
 	updateBoard (&board, width, height, WHITE_SPACE,
-		BORDER_CHAR, snakeHeadPtr, foodCell);
+		BORDER_CHAR, snake, foodCell);
 
 	// 5 - printing the board
 	move (0, 0);
 	printBoard (board, width, height);
 	printw ("score: %d\n", score);
 #ifdef DEBUG
-	printSnake (snakeHeadPtr);
+	printSnake (snake);
 #endif
 
 	refresh ();
