@@ -6,8 +6,7 @@
 
 int main(int argc, char **argv)
 {
-    char **board;
-    int height = 20, width = 20;
+    Board board;
     SnakeDirection prevDirection;
     char command[20];
     FoodCell foodCell;
@@ -30,8 +29,9 @@ int main(int argc, char **argv)
     initscr ();
 
     initSnake (&snake);
-    initBoard (&board, width, height, WHITE_SPACE, snake, &foodCell);
-    printBoard (board, width, height);
+
+    initBoard (&board, 20, 20, snake, &foodCell);
+    printBoard (board);
 
     refresh ();
 
@@ -48,8 +48,7 @@ int main(int argc, char **argv)
 
 	// 2 - transformations over the snake
 	collisionOccured = moveSnake (
-		&snake, prevDirection, &foodCell,
-		board, width, height, &score);
+		&snake, prevDirection, &foodCell, &board, &score);
 
 	// 3 - check for collision
 	if (collisionOccured) {
@@ -60,12 +59,11 @@ int main(int argc, char **argv)
 	}
 
 	// 4 - redrawing the board
-	updateBoard (&board, width, height, WHITE_SPACE,
-		BORDER_CHAR, snake, foodCell);
+	updateBoard (&board, snake, foodCell);
 
 	// 5 - printing the board
 	move (0, 0);
-	printBoard (board, width, height);
+	printBoard (board);
 	printw ("score: %d\n", score);
 #ifdef DEBUG
 	printSnake (snake);
@@ -75,7 +73,7 @@ int main(int argc, char **argv)
     }
 
 END:
-    freeBoard (&board, width, height);
+    freeBoard (&board);
 
     endwin ();
 

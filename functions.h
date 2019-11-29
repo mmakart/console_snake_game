@@ -10,6 +10,12 @@
 # define LT_RB '\\'
 
 typedef struct {
+    char **symbols;
+    int width;
+    int height;
+} Board;
+
+typedef struct {
     int x;
     int y;
     char c;
@@ -42,20 +48,20 @@ void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
 	SnakeCell cell);
 SnakeCell dequeueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr);
 
-void allocateBoard (char ***board, int width, int height);
-void initBoard (char ***board, int width, int height, char whiteSpace, Snake snake, FoodCell *food);
-void freeBoard (char ***board, int width, int height);
-void setEmptyBoard (char ***board, int width, int height, char space, char border);
-void setBorder (char **board, int width, int height, char c);
-void printBoard(char **board, int width, int height);
+void allocateBoard (Board *board);
+void initBoard (Board *board, int initWidth, int initHeight, Snake snake, FoodCell *food);
+void freeBoard (Board *board);
+void setEmptyBoard (Board *board);
+void setBorder (Board *board);
+void printBoard(Board board);
 void initSnake (Snake *snake);
-void setSnake (char ***board, Snake snake);
+void setSnake (Board *board, Snake snake);
 void printSnake (Snake snake);
-FoodCell generateFood (char **board, int width, int height);
-void setFood (char **board, FoodCell food);
+FoodCell generateFood (Board board);
+void setFood (Board *board, FoodCell food);
 
 SnakeDirection identificateDirection (int command);
-int isCollision (char **board, SnakeCell cell, int width, int height);
-void updateBoard (char ***board, int width, int height, char whiteSpace, char border, Snake snake, FoodCell food);
-int moveSnake (Snake *snake, SnakeDirection previousDirection, FoodCell *food, char **board, int width, int height, int *score);
+int isCollision (Board *board, SnakeCell cell);
+void updateBoard (Board *board, Snake snake, FoodCell food);
+int moveSnake (Snake *snake, SnakeDirection previousDirection, FoodCell *food, Board *board, int *score);
 #endif

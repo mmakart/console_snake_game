@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "functions.h"
 #include <ncurses.h>
 
@@ -17,72 +16,69 @@ void printSnake (Snake snake)
     printw ("NULL\n");
 }
 
-void initBoard (char ***board, int width, int height, char whiteSpace,
-	        Snake snake, FoodCell *food)
+void initBoard (Board *board, int initWidth, int initHeight,
+	Snake snake, FoodCell *food)
 {
-    allocateBoard (board, width, height);
+    board->width = initWidth;
+    board->height = initHeight;
+    allocateBoard (board);
 
-    setEmptyBoard (board, width, height, whiteSpace, BORDER_CHAR);
+    setEmptyBoard (board);
     setSnake (board, snake);
-    *food = generateFood (*board, width, height);
-    setFood (*board, *food);
+    // TODO вынести в отдельную функцию initFood
+    *food = generateFood (*board);
+    setFood (board, *food);
 }
 
-void updateBoard (char ***board, int width, int height, char whiteSpace,
-		  char border, Snake snake, FoodCell food)
+void updateBoard (Board *board, Snake snake, FoodCell food)
 {
-#ifdef DEBUG
-    printf ("width=%d\theight=%d\n", width, height);
-    printf ("food.x=%d\tfood.y=%d\n", food.x, food.y);
-#endif
-    setEmptyBoard (board, width, height, whiteSpace, border);
+    setEmptyBoard (board);
     setSnake (board, snake);
-    setFood (*board, food);
+    setFood (board, food);
 }
 
-void allocateBoard (char ***board, int width, int height)
+void allocateBoard (Board *board)
 {
-    *board = malloc (height * sizeof (char *));
+    board->symbols = malloc (board->height * sizeof (char *));
 
-    for (int i = 0; i < height; i++)
-	(*board)[i] = malloc (width * sizeof (char));
+    for (int i = 0; i < board->height; i++)
+	board->symbols[i] = malloc (board->width * sizeof (char));
 }
 
-void freeBoard (char ***board, int width, int height)
+void freeBoard (Board *board)
 {
-    for (int i = 0; i < height; i++)
-	free ((*board)[i]);
-    free (*board);
+    for (int i = 0; i < board->height; i++)
+	free (board->symbols[i]);
+    free (board->symbols);
 }
 
-void setEmptyBoard (char ***board, int width, int height, char space,
-		    char border)
+void setEmptyBoard (Board *board)
 {
-    for (int i = 0; i < height; i++)
-	for (int j = 0; j < width; j++)
-	    (*board)[i][j] = space;
+    for (int i = 0; i < board->height; i++)
+	for (int j = 0; j < board->width; j++)
+	    board->symbols[i][j] = WHITE_SPACE;
 
     // Задание границ
-    setBorder (*board, width, height, border);
+    setBorder (board);
 }
 
-void setBorder (char **board, int width, int height, char c)
+void setBorder (Board *board)
 {
-    for (int i = 0; i < height; i++) {
-	board[i][width - 1] = c;
-	board[i][0] = c;
+    for (int i = 0; i < board->height; i++) {
+	board->symbols[i][board->width - 1] = BORDER_CHAR;
+	board->symbols[i][0] = BORDER_CHAR;
     }
-    for (int i = 0; i < width; i++) {
-	board[0][i] = c;
-	board[height - 1][i] = c;
+    for (int i = 0; i < board->width; i++) {
+	board->symbols[0][i] = BORDER_CHAR;
+	board->symbols[board->height - 1][i] = BORDER_CHAR;
     }
 }
 
-void printBoard(char **board, int width, int height)
+void printBoard(Board board)
 {
-    for (int i = 0; i < height; i++) {
-	for (int j = 0; j < width; j++)
-	    printw ("%c", board[i][j]);
+    for (int i = 0; i < board.height; i++) {
+	for (int j = 0; j < board.width; j++)
+	    printw ("%c", board.symbols[i][j]);
 	printw ("\n");
     }
 }
@@ -136,11 +132,11 @@ SnakeCell dequeueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr)
     return value;
 }
 
-void setSnake (char ***board, Snake snake)
+void setSnake (Board *board, Snake snake)
 {
     CELLQUEUEPTR currentPtr = snake.headPtr;
     while (currentPtr != NULL) {
-	(*board)[currentPtr->cell.y][currentPtr->cell.x] = currentPtr->cell.c;
+	board->symbols[currentPtr->cell.y][currentPtr->cell.x] = currentPtr->cell.c;
 	currentPtr = currentPtr->nextPtr;
     }
 
@@ -149,17 +145,17 @@ void setSnake (char ***board, Snake snake)
 
 // Генерирует координаты для еды, не совпадающие с координатами границ
 // и змеи
-FoodCell generateFood (char **board, int width, int height)
+FoodCell generateFood (Board board)
 {
     FoodCell food;
     int x, y;
 
     while (1) {
 
-	x = 1 + rand() % (width - 2);
-	y = 1 + rand() % (height - 2);
+	x = 1 + rand() % (board.width - 2);
+	y = 1 + rand() % (board.height - 2);
 
-	if (board[y][x] != WHITE_SPACE)
+	if (board.symbols[y][x] != WHITE_SPACE)
 	    continue;
 	else {
 	    food.x = x;
@@ -174,9 +170,9 @@ FoodCell generateFood (char **board, int width, int height)
     return food;
 }
 
-void setFood (char **board, FoodCell food)
+void setFood (Board *board, FoodCell food)
 {
-    board[food.y][food.x] = FOOD_CHAR;
+    board->symbols[food.y][food.x] = FOOD_CHAR;
 }
 
 SnakeDirection identificateDirection (int command)
@@ -220,7 +216,7 @@ SnakeDirection identificateDirection (int command)
 }
 
 int moveSnake (Snake *snake, SnakeDirection previousDirection,
-	       FoodCell *food, char **board, int width, int height, int *score)
+	       FoodCell *food, Board *board, int *score)
 {
     SnakeCell tempCell;
 
@@ -255,15 +251,15 @@ int moveSnake (Snake *snake, SnakeDirection previousDirection,
 	tempCell.x += 1;
 
     // Проверка на столкновение
-    if (isCollision (board, tempCell, width, height))
+    if (isCollision (board, tempCell))
 	return 1;
 
     // Добавляем "голову" в конец очереди
     enqueueCell (&(snake->headPtr), &(snake->tailPtr), tempCell);
 
     // Если наткнулись на еду
-    if (board[tempCell.y][tempCell.x] == FOOD_CHAR) {
-	*food = generateFood (board, width, height);
+    if (board->symbols[tempCell.y][tempCell.x] == FOOD_CHAR) {
+	*food = generateFood (*board);
 	(*score)++;
     }
     else
@@ -274,15 +270,19 @@ int moveSnake (Snake *snake, SnakeDirection previousDirection,
 
 }
 
-int isCollision (char **board, SnakeCell cell, int width, int height)
+int isCollision (Board *board, SnakeCell cell)
 {
 #ifdef DEBUG
     printf ("cell.x=%d\tcell.y=%d\nboard[%d][%d]='%c'",
 	    cell.x, cell.y, cell.y, cell.x, board[cell.y][cell.x]);
 #endif
-    return (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height
-	    || board[cell.y][cell.x] == BORDER_CHAR
-	    || board[cell.y][cell.x] == LB_RT
-	    || board[cell.y][cell.x] == LT_RB
-	    || board[cell.y][cell.x] == BODY_CHAR);
+    return (
+	       cell.x < 0
+	    || cell.x >= board->width
+	    || cell.y < 0
+	    || cell.y >= board->height
+	    || board->symbols[cell.y][cell.x] == BORDER_CHAR
+	    || board->symbols[cell.y][cell.x] == LB_RT
+	    || board->symbols[cell.y][cell.x] == LT_RB
+	    || board->symbols[cell.y][cell.x] == BODY_CHAR);
 }
