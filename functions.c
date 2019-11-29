@@ -239,14 +239,34 @@ int moveSnake (Snake *snake, SnakeDirection previousDirection,
 	snake->tailPtr->cell.c = BODY_CHAR;
 
     // Назначаем "голове" нужные координаты
-    if (snake->direction == TO_TOP)
-	tempCell.y -= 1;
-    else if (snake->direction == TO_RIGHT)
-	tempCell.x += 1;
-    else if (snake->direction == TO_LEFT)
-	tempCell.x -= 1;
-    else if (snake->direction == TO_BOTTOM)
-	tempCell.y += 1;
+    if (direction == TO_TOP) {
+	// Появляемся с другой стороны
+	if (tempCell.y == 1)
+	    tempCell.y = board->height - 2;
+	else
+	    tempCell.y -= 1;
+    }
+    else if (direction == TO_RIGHT) {
+	// Появляемся с другой стороны
+	if (tempCell.x == board->width - 2)
+	    tempCell.x = 1;
+	else
+	    tempCell.x += 1;
+    }
+    else if (direction == TO_LEFT) {
+	// Появляемся с другой стороны
+	if (tempCell.x == 1)
+	    tempCell.x = board->width - 2;
+	else
+	    tempCell.x -= 1;
+    }
+    else if (direction == TO_BOTTOM) {
+	// Появляемся с другой стороны
+	if (tempCell.y == board->height - 2)
+	    tempCell.y = 1;
+	else	
+	    tempCell.y += 1;
+    }
     else
 	tempCell.x += 1;
 
