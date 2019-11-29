@@ -25,7 +25,7 @@ void initBoard (Board *board, int initWidth, int initHeight,
 
     setEmptyBoard (board);
     setSnake (board, snake);
-    // TODO вынести в отдельную функцию initFood
+
     *food = generateFood (*board);
     setFood (board, *food);
 }
