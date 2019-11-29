@@ -37,12 +37,11 @@ typedef struct {
     SnakeDirection direction;
 } Snake;
 
-struct foodCell {
+typedef struct {
     int x;
     int y;
     char c;
-};
-typedef struct foodCell FoodCell;
+} FoodCell;
 
 void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
 	SnakeCell cell);
