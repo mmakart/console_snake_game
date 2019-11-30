@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <ncurses.h>
 #include <time.h>
 #include "functions.h"
@@ -13,6 +14,7 @@ int main(int argc, char **argv)
     int collisionOccured = 0;
     int timePeriod;
     int score = 0;
+    int transparentBorder = 0;
 
     srand (time(NULL));
 
@@ -20,6 +22,10 @@ int main(int argc, char **argv)
 	timePeriod = atoi (argv [1]);
     else
 	timePeriod = 400;
+
+    if (argc >= 3) {
+	transparentBorder = (!(strcmp (argv[2], "--transparent")) ? 1 : 0);
+    }
 
     Snake snake;
     snake.headPtr = NULL;
@@ -48,7 +54,7 @@ int main(int argc, char **argv)
 
 	// 2 - transformations over the snake
 	collisionOccured = moveSnake (
-		&snake, prevDirection, &foodCell, &board, &score);
+		&snake, prevDirection, &foodCell, &board, &score, transparentBorder);
 
 	// 3 - check for collision
 	if (collisionOccured) {

@@ -62,5 +62,5 @@ void setFood (Board *board, FoodCell food);
 SnakeDirection identificateDirection (int command);
 int isCollision (Board *board, SnakeCell cell);
 void updateBoard (Board *board, Snake snake, FoodCell food);
-int moveSnake (Snake *snake, SnakeDirection previousDirection, FoodCell *food, Board *board, int *score);
+int moveSnake (Snake *snake, SnakeDirection previousDirection, FoodCell *food, Board *board, int *score, int transparentBorder);
 #endif
