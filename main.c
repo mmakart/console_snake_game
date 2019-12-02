@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	timePeriod = 400;
 
     if (argc >= 3) {
-	transparentBorder = (!(strcmp (argv[2], "--transparent")) ? 1 : 0);
+	transparentBorder = !(strcmp (argv[2], "--transparent"));
     }
 
     Snake snake;
