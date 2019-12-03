@@ -28,9 +28,6 @@ int main(int argc, char **argv)
     }
 
     Snake snake;
-    snake.headPtr = NULL;
-    snake.tailPtr = NULL;
-    snake.direction = TO_RIGHT;
 
     initscr ();
 

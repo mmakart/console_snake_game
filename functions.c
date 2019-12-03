@@ -91,6 +91,10 @@ void initSnake (Snake *snake)
 	{ 7, 10, BODY_CHAR },
 	{ 8, 10, HEAD_CHAR } };
 
+    snake->headPtr = NULL;
+    snake->tailPtr = NULL;
+    snake->direction = TO_RIGHT;
+
     // Добавляем ячейки в змею
     for (int i = 0; i < BEGIN_SIZE; i++)
 	enqueueCell (&(snake->headPtr), &(snake->tailPtr), primaryCells[i]);
