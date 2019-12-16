@@ -4,28 +4,28 @@
 //FALSE, если не введён
 int kbhit()
 {
-	int ch, r;
+    int ch, r;
 
-	//Отключить вечное ожидание ввода
-	nodelay(stdscr, TRUE);
-	//Не показывать вводимый символ
-	noecho();
+    //Отключить вечное ожидание ввода
+    nodelay(stdscr, TRUE);
+    //Не показывать вводимый символ
+    noecho();
 
-	ch = getch();
+    ch = getch();
 
-	//Если ничего не нажималось
-	if (ch == ERR)
-		r = FALSE;
-	else
-	{
-		r = TRUE;
-		ungetch(ch);
-	}       
+    //Если ничего не нажималось
+    if (ch == ERR)
+	r = FALSE;
+    else
+    {
+	r = TRUE;
+	ungetch(ch);
+    }
 
-	//Включаем показ введённых символов и вечное ожидание
-	echo(); 
-	nodelay(stdscr, FALSE);
+    //Включаем показ введённых символов и вечное ожидание
+    echo(); 
+    nodelay(stdscr, FALSE);
 
-	//Возвращаем TRUE или FALSE
-	return r;
+    //Возвращаем TRUE или FALSE
+    return r;
 }
