@@ -214,6 +214,9 @@ SnakeDirection identificateDirection (int command)
 	case 'd':
 	    direction = TO_RIGHT;
 	    break;
+	default:
+	    direction = TO_RIGHT;
+	    break;
     }
 
     return direction;
