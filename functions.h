@@ -48,12 +48,16 @@ void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
 SnakeCell dequeueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr);
 
 void allocateBoard (Board *board);
-void initBoard (Board *board, int initWidth, int initHeight, Snake snake, FoodCell *food);
+void initBoard (Board *board, int initWidth, int initHeight, Snake *snake, FoodCell *food);
 void freeBoard (Board *board);
 void setEmptyBoard (Board *board);
 void setBorder (Board *board);
-void printBoard(Board board);
-void initSnake (Snake *snake);
+void printBoard(Board board, int isRepeating);
+void printBoardLeftRepeatingPart (Board board, int currentLine);
+void printBoardRightRepeatingPart (Board board, int currentLine);
+void printBoardUpperRepeatingPart (Board board);
+void printBoardBottomRepeatingPart (Board board);
+void initSnake (Snake *snake, int initWidth, int initHeight);
 void setSnake (Board *board, Snake snake);
 void printSnake (Snake snake);
 FoodCell generateFood (Board board);

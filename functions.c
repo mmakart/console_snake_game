@@ -4,7 +4,7 @@
 #include <ncurses.h>
 
 /*#define DEBUG*/
-#define BEGIN_SIZE 4
+#define BEGIN_SIZE 2
 
 void printSnake (Snake snake)
 {
@@ -17,14 +17,16 @@ void printSnake (Snake snake)
 }
 
 void initBoard (Board *board, int initWidth, int initHeight,
-	Snake snake, FoodCell *food)
+	Snake *snake, FoodCell *food)
 {
     board->width = initWidth;
     board->height = initHeight;
     allocateBoard (board);
 
     setEmptyBoard (board);
-    setSnake (board, snake);
+
+    initSnake (snake, initWidth, initHeight);
+    setSnake (board, *snake);
 
     *food = generateFood (*board);
     setFood (board, *food);
@@ -74,22 +76,69 @@ void setBorder (Board *board)
     }
 }
 
-void printBoard(Board board)
+void printBoard(Board board, int isRepeating)
 {
+    if (isRepeating)
+	printBoardUpperRepeatingPart (board);
+
     for (int i = 0; i < board.height; i++) {
+	if (isRepeating)
+	    printBoardLeftRepeatingPart (board, i);
+
+	for (int j = 0; j < board.width; j++) {
+	    printw ("%c", board.symbols[i][j]);
+	}
+
+	if (isRepeating)
+	    printBoardRightRepeatingPart (board, i);
+
+	printw ("\n");
+    }
+
+    if (isRepeating)
+	printBoardBottomRepeatingPart (board);
+}
+
+void printBoardLeftRepeatingPart (Board board, int currentLine)
+{
+    for (int i = 1; i < board.width - 1; i++)
+	printw ("%c", board.symbols[currentLine][i]);
+}
+
+void printBoardRightRepeatingPart (Board board, int currentLine)
+{
+    printBoardLeftRepeatingPart (board, currentLine);
+}
+
+void printBoardUpperRepeatingPart (Board board)
+{
+    for (int i = 1; i < board.height - 1; i++) {
+
+	for (int j = 0; j < board.width - 2; j++)
+	    printw ("%c", '!');
+
 	for (int j = 0; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
+
+	for (int j = 0; j < board.width - 2; j++)
+	    printw ("%c", '!');
+
 	printw ("\n");
     }
 }
 
-void initSnake (Snake *snake)
+void printBoardBottomRepeatingPart (Board board)
 {
+    printBoardUpperRepeatingPart (board);
+}
+
+void initSnake (Snake *snake, int initWidth, int initHeight)
+{
+    int boardWidthCenter = initWidth / 2;
+    int boardHeightCenter = initHeight / 2;
     SnakeCell primaryCells[BEGIN_SIZE] = {
-	{ 5, 10, BODY_CHAR },
-	{ 6, 10, BODY_CHAR },
-	{ 7, 10, BODY_CHAR },
-	{ 8, 10, HEAD_CHAR } };
+	{ boardWidthCenter, boardHeightCenter, BODY_CHAR },
+	{ boardWidthCenter + 1, boardHeightCenter, HEAD_CHAR } };
 
     snake->headPtr = NULL;
     snake->tailPtr = NULL;
@@ -101,7 +150,7 @@ void initSnake (Snake *snake)
 }
 
 void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
-		  SnakeCell value)
+	SnakeCell value)
 {
     CELLQUEUEPTR newPtr = malloc (sizeof (CELLQUEUE));
 

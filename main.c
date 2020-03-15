@@ -15,6 +15,8 @@ int main(int argc, char **argv)
     int timePeriod;
     int score = 0;
     int transparentBorder = 0;
+    int isRepeating = 0;
+    int boardWidth = 20, boardHeight = 10;
 
     srand (time(NULL));
 
@@ -27,14 +29,16 @@ int main(int argc, char **argv)
 	transparentBorder = !(strcmp (argv[2], "--transparent"));
     }
 
+    isRepeating = transparentBorder;
+
     Snake snake;
 
     initscr ();
 
-    initSnake (&snake);
+    initBoard (&board, boardWidth, boardHeight, &snake, &foodCell);
 
-    initBoard (&board, 20, 20, snake, &foodCell);
-    printBoard (board);
+
+    printBoard (board, isRepeating);
 
     refresh ();
 
@@ -66,7 +70,7 @@ int main(int argc, char **argv)
 
 	// 5 - printing the board
 	move (0, 0);
-	printBoard (board);
+	printBoard (board, isRepeating);
 	printw ("score: %d\n", score);
 #ifdef DEBUG
 	printSnake (snake);
