@@ -78,6 +78,8 @@ void setBorder (Board *board)
 
 void printBoard(Board board, int isRepeating)
 {
+    move (0, 0);
+
     if (isRepeating)
 	printBoardUpperRepeatingPart (board);
 

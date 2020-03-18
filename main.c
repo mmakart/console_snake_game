@@ -8,6 +8,7 @@
 int main(int argc, char **argv)
 {
     Board board;
+    Snake snake;
     SnakeDirection prevDirection;
     char command[20];
     FoodCell foodCell;
@@ -29,6 +30,8 @@ int main(int argc, char **argv)
 	transparentBorder = !(strcmp (argv[2], "--transparent"));
     }
 
+    isRepeating = transparentBorder;
+
     if (argc >= 5) {
 	boardWidth = atoi (argv[3]);
 	boardHeight = atoi (argv[4]);
@@ -36,10 +39,6 @@ int main(int argc, char **argv)
 	boardWidth = 15;
 	boardHeight = 15;
     }
-
-    isRepeating = transparentBorder;
-
-    Snake snake;
 
     initscr ();
 
@@ -76,7 +75,6 @@ int main(int argc, char **argv)
 	updateBoard (&board, snake, foodCell);
 
 	// 5 - printing the board
-	move (0, 0);
 	printBoard (board, isRepeating);
 	printw ("score: %d\n", score);
 #ifdef DEBUG
