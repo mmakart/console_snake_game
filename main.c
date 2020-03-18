@@ -29,6 +29,14 @@ int main(int argc, char **argv)
 	transparentBorder = !(strcmp (argv[2], "--transparent"));
     }
 
+    if (argc >= 5) {
+	boardWidth = atoi (argv[3]);
+	boardHeight = atoi (argv[4]);
+    } else {
+	boardWidth = 15;
+	boardHeight = 15;
+    }
+
     isRepeating = transparentBorder;
 
     Snake snake;
@@ -36,7 +44,6 @@ int main(int argc, char **argv)
     initscr ();
 
     initBoard (&board, boardWidth, boardHeight, &snake, &foodCell);
-
 
     printBoard (board, isRepeating);
 
