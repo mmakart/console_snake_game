@@ -114,14 +114,14 @@ void printBoardUpperRepeatingPart (Board board)
 {
     for (int i = 1; i < board.height - 1; i++) {
 
-	for (int j = 0; j < board.width - 2; j++)
-	    printw ("%c", '!');
+	for (int j = 1; j < board.width - 1; j++)
+	    printw ("%c", board.symbols[i][j]);
 
 	for (int j = 0; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
-	for (int j = 0; j < board.width - 2; j++)
-	    printw ("%c", '!');
+	for (int j = 1; j < board.width - 1; j++)
+	    printw ("%c", board.symbols[i][j]);
 
 	printw ("\n");
     }
