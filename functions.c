@@ -103,26 +103,29 @@ void printBoard(Board board, int isRepeating)
 
 void printBoardLeftRepeatingPart (Board board, int currentLine)
 {
-    for (int i = 1; i < board.width - 1; i++)
+    for (int i = board.width / 2; i < board.width - 1; i++)
 	printw ("%c", board.symbols[currentLine][i]);
 }
 
 void printBoardRightRepeatingPart (Board board, int currentLine)
 {
-    printBoardLeftRepeatingPart (board, currentLine);
+    for (int i = 1; i < board.width / 2; i++)
+	printw ("%c", board.symbols[currentLine][i]);
 }
 
 void printBoardUpperRepeatingPart (Board board)
 {
-    for (int i = 1; i < board.height - 1; i++) {
+    int halfHeight = board.height / 2;
 
-	for (int j = 1; j < board.width - 1; j++)
+    for (int i = halfHeight; i < board.height - 1; i++) {
+
+	for (int j = board.width / 2; j < board.width - 1; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	for (int j = 0; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
-	for (int j = 1; j < board.width - 1; j++)
+	for (int j = 1; j < board.width / 2; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	printw ("\n");
@@ -131,7 +134,22 @@ void printBoardUpperRepeatingPart (Board board)
 
 void printBoardBottomRepeatingPart (Board board)
 {
-    printBoardUpperRepeatingPart (board);
+    int halfHeight = board.height / 2;
+    int halfWidth = board.width / 2;
+
+    for (int i = 1; i < halfHeight; i++) {
+
+	for (int j = board.width / 2; j < board.width - 1; j++)
+	    printw ("%c", board.symbols[i][j]);
+
+	for (int j = 0; j < board.width; j++)
+	    printw ("%c", board.symbols[i][j]);
+
+	for (int j = 1; j < board.width / 2; j++)
+	    printw ("%c", board.symbols[i][j]);
+
+	printw ("\n");
+    }
 }
 
 void initSnake (Snake *snake, int initWidth, int initHeight)
