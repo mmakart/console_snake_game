@@ -157,7 +157,7 @@ void initSnake (Snake *snake, int initWidth, int initHeight)
     int boardWidthCenter = initWidth / 2;
     int boardHeightCenter = initHeight / 2;
     SnakeCell primaryCells[BEGIN_SIZE] = {
-	{ boardWidthCenter, boardHeightCenter, BODY_CHAR },
+	{ boardWidthCenter, boardHeightCenter, HOR_BODY_CHAR },
 	{ boardWidthCenter + 1, boardHeightCenter, HEAD_CHAR } };
 
     snake->headPtr = NULL;
@@ -311,8 +311,11 @@ int moveSnake (Snake *snake, SnakeDirection previousDirection,
 	    || snake->direction == TO_LEFT && previousDirection == TO_TOP
 	    || snake->direction == TO_TOP && previousDirection == TO_LEFT)
 	snake->tailPtr->cell.c = LT_RB;
+    else if (snake->direction == TO_RIGHT && previousDirection == TO_RIGHT
+	    || snake->direction == TO_LEFT && previousDirection == TO_LEFT)
+	snake->tailPtr->cell.c = HOR_BODY_CHAR;
     else
-	snake->tailPtr->cell.c = BODY_CHAR;
+	snake->tailPtr->cell.c = VERT_BODY_CHAR;
 
     // Назначаем "голове" нужные координаты
     if (snake->direction == TO_TOP) {
@@ -380,5 +383,6 @@ int isCollision (Board *board, SnakeCell cell)
 	    || board->symbols[cell.y][cell.x] == BORDER_CHAR
 	    || board->symbols[cell.y][cell.x] == LB_RT
 	    || board->symbols[cell.y][cell.x] == LT_RB
-	    || board->symbols[cell.y][cell.x] == BODY_CHAR);
+	    || board->symbols[cell.y][cell.x] == HOR_BODY_CHAR
+	    || board->symbols[cell.y][cell.x] == VERT_BODY_CHAR);
 }

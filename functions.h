@@ -3,7 +3,8 @@
 
 # define BORDER_CHAR '#'
 # define HEAD_CHAR '@'
-# define BODY_CHAR 'o'
+# define HOR_BODY_CHAR '-'
+# define VERT_BODY_CHAR '|'
 # define FOOD_CHAR '*'
 # define WHITE_SPACE ' '
 # define LB_RT '/'
