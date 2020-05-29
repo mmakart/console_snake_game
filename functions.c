@@ -17,13 +17,13 @@ void printSnake (Snake snake)
 }
 
 void initBoard (Board *board, int initWidth, int initHeight,
-	Snake *snake, FoodCell *food)
+	Snake *snake, FoodCell *food, int isRepeating)
 {
     board->width = initWidth;
     board->height = initHeight;
     allocateBoard (board);
 
-    setEmptyBoard (board);
+    setEmptyBoard (board, isRepeating);
 
     initSnake (snake, initWidth, initHeight);
     setSnake (board, *snake);
@@ -32,9 +32,9 @@ void initBoard (Board *board, int initWidth, int initHeight,
     setFood (board, *food);
 }
 
-void updateBoard (Board *board, Snake snake, FoodCell food)
+void updateBoard (Board *board, Snake snake, FoodCell food, int isRepeating)
 {
-    setEmptyBoard (board);
+    setEmptyBoard (board, isRepeating);
     setSnake (board, snake);
     setFood (board, food);
 }
@@ -54,14 +54,15 @@ void freeBoard (Board *board)
     free (board->symbols);
 }
 
-void setEmptyBoard (Board *board)
+void setEmptyBoard (Board *board, int isRepeating)
 {
     for (int i = 0; i < board->height; i++)
 	for (int j = 0; j < board->width; j++)
 	    board->symbols[i][j] = WHITE_SPACE;
 
     // Задание границ
-    setBorder (board);
+    if (!isRepeating)
+	setBorder (board);
 }
 
 void setBorder (Board *board)
@@ -103,13 +104,13 @@ void printBoard(Board board, int isRepeating)
 
 void printBoardLeftRepeatingPart (Board board, int currentLine)
 {
-    for (int i = board.width / 2; i < board.width - 1; i++)
+    for (int i = board.width / 2; i < board.width; i++)
 	printw ("%c", board.symbols[currentLine][i]);
 }
 
 void printBoardRightRepeatingPart (Board board, int currentLine)
 {
-    for (int i = 1; i < board.width / 2; i++)
+    for (int i = 0; i < board.width / 2; i++)
 	printw ("%c", board.symbols[currentLine][i]);
 }
 
@@ -117,15 +118,15 @@ void printBoardUpperRepeatingPart (Board board)
 {
     int halfHeight = board.height / 2;
 
-    for (int i = halfHeight; i < board.height - 1; i++) {
+    for (int i = halfHeight; i < board.height; i++) {
 
-	for (int j = board.width / 2; j < board.width - 1; j++)
+	for (int j = board.width / 2; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	for (int j = 0; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
-	for (int j = 1; j < board.width / 2; j++)
+	for (int j = 0; j < board.width / 2; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	printw ("\n");
@@ -135,17 +136,16 @@ void printBoardUpperRepeatingPart (Board board)
 void printBoardBottomRepeatingPart (Board board)
 {
     int halfHeight = board.height / 2;
-    int halfWidth = board.width / 2;
 
-    for (int i = 1; i < halfHeight; i++) {
+    for (int i = 0; i < halfHeight; i++) {
 
-	for (int j = board.width / 2; j < board.width - 1; j++)
+	for (int j = board.width / 2; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	for (int j = 0; j < board.width; j++)
 	    printw ("%c", board.symbols[i][j]);
 
-	for (int j = 1; j < board.width / 2; j++)
+	for (int j = 0; j < board.width / 2; j++)
 	    printw ("%c", board.symbols[i][j]);
 
 	printw ("\n");
@@ -320,29 +320,29 @@ int moveSnake (Snake *snake, SnakeDirection previousDirection,
     // Назначаем "голове" нужные координаты
     if (snake->direction == TO_TOP) {
 	// Появляемся с другой стороны
-	if (tempCell.y == 1 && transparentBorder)
-	    tempCell.y = board->height - 2;
+	if (tempCell.y == 0 && transparentBorder)
+	    tempCell.y = board->height - 1;
 	else
 	    tempCell.y -= 1;
     }
     else if (snake->direction == TO_RIGHT) {
 	// Появляемся с другой стороны
-	if (tempCell.x == board->width - 2 && transparentBorder)
-	    tempCell.x = 1;
+	if (tempCell.x == board->width - 1 && transparentBorder)
+	    tempCell.x = 0;
 	else
 	    tempCell.x += 1;
     }
     else if (snake->direction == TO_LEFT) {
 	// Появляемся с другой стороны
-	if (tempCell.x == 1 && transparentBorder)
-	    tempCell.x = board->width - 2;
+	if (tempCell.x == 0 && transparentBorder)
+	    tempCell.x = board->width - 1;
 	else
 	    tempCell.x -= 1;
     }
     else if (snake->direction == TO_BOTTOM) {
 	// Появляемся с другой стороны
-	if (tempCell.y == board->height - 2 && transparentBorder)
-	    tempCell.y = 1;
+	if (tempCell.y == board->height - 1 && transparentBorder)
+	    tempCell.y = 0;
 	else	
 	    tempCell.y += 1;
     }

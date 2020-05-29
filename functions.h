@@ -49,9 +49,9 @@ void enqueueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr,
 SnakeCell dequeueCell (CELLQUEUEPTR *headPtr, CELLQUEUEPTR *tailPtr);
 
 void allocateBoard (Board *board);
-void initBoard (Board *board, int initWidth, int initHeight, Snake *snake, FoodCell *food);
+void initBoard (Board *board, int initWidth, int initHeight, Snake *snake, FoodCell *food, int isRepeating);
 void freeBoard (Board *board);
-void setEmptyBoard (Board *board);
+void setEmptyBoard (Board *board, int isRepeating);
 void setBorder (Board *board);
 void printBoard(Board board, int isRepeating);
 void printBoardLeftRepeatingPart (Board board, int currentLine);
@@ -66,6 +66,6 @@ void setFood (Board *board, FoodCell food);
 
 SnakeDirection identificateDirection (int command);
 int isCollision (Board *board, SnakeCell cell);
-void updateBoard (Board *board, Snake snake, FoodCell food);
+void updateBoard (Board *board, Snake snake, FoodCell food, int isRepeating);
 int moveSnake (Snake *snake, SnakeDirection previousDirection, FoodCell *food, Board *board, int *score, int transparentBorder);
 #endif

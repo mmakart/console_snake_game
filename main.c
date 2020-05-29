@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     int score = 0;
     int transparentBorder = 0;
     int isRepeating = 0;
-    int boardWidth = 20, boardHeight = 10;
+    int boardWidth = 15, boardHeight = 15;
 
     srand (time(NULL));
 
@@ -35,14 +35,11 @@ int main(int argc, char **argv)
     if (argc >= 5) {
 	boardWidth = atoi (argv[3]);
 	boardHeight = atoi (argv[4]);
-    } else {
-	boardWidth = 15;
-	boardHeight = 15;
     }
 
     initscr ();
 
-    initBoard (&board, boardWidth, boardHeight, &snake, &foodCell);
+    initBoard (&board, boardWidth, boardHeight, &snake, &foodCell, isRepeating);
 
     printBoard (board, isRepeating);
 
@@ -72,7 +69,7 @@ int main(int argc, char **argv)
 	}
 
 	// 4 - redrawing the board
-	updateBoard (&board, snake, foodCell);
+	updateBoard (&board, snake, foodCell, isRepeating);
 
 	// 5 - printing the board
 	printBoard (board, isRepeating);
