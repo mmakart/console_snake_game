@@ -9,6 +9,7 @@
 # define WHITE_SPACE ' '
 # define LB_RT '/'
 # define LT_RB '\\'
+# define MIRROR_CHAR ':'
 
 typedef struct {
     char **symbols;
@@ -54,6 +55,7 @@ void freeBoard (Board *board);
 void setEmptyBoard (Board *board, int isRepeating);
 void setBorder (Board *board);
 void printBoard(Board board, int isRepeating);
+int isSnakeCell(int cell);
 void printBoardLeftRepeatingPart (Board board, int currentLine);
 void printBoardRightRepeatingPart (Board board, int currentLine);
 void printBoardUpperRepeatingPart (Board board);
