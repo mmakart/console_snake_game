@@ -9,7 +9,7 @@
 # define WHITE_SPACE ' '
 # define LB_RT '/'
 # define LT_RB '\\'
-# define MIRROR_CHAR ':'
+# define MIRROR_CHAR '.'
 
 typedef struct {
     char **symbols;
