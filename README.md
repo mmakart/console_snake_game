@@ -10,7 +10,7 @@
 
 ## Options
 
-`./snake <tick length in milliseconds (default 400)> <--transparent | something else> <width> <height>
+`./snake <tick length in milliseconds (default 400)> <--transparent | something else> <width> <height>`
 
 ## Examples
 
