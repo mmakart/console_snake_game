@@ -8,6 +8,10 @@
 
 `./snake`
 
+## Controls
+
+wasd
+
 ## Options
 
 `./snake <tick length in milliseconds (default 400)> <--transparent | something else> <width> <height>`
